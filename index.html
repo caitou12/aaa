@@ -12,8 +12,6 @@
     }
     canvas {
       position: absolute;
-      top: 0;
-      left: 0;
     }
   </style>
 </head>
@@ -48,9 +46,9 @@
         this.y = y;
         this.hue = hue;
         this.lightness = 50;
-        this.size = 15 + Math.random() * 10;
+        this.size = 10 + Math.random() * 5; // 减小粒子大小
         const angle = Math.random() * 2 * Math.PI;
-        const blastSpeed = 1 + Math.random() * 6;
+        const blastSpeed = 1 + Math.random() * 4; // 降低爆炸速度
         this.xSpeed = Math.cos(angle) * blastSpeed;
         this.ySpeed = Math.sin(angle) * blastSpeed;
         this.target = getTarget();
@@ -70,9 +68,8 @@
           const dy = this.target.y - this.y;
           const dist = Math.sqrt(dx * dx + dy * dy);
           const a = Math.atan2(dy, dx);
-          const tx = Math.cos(a) * 5;
-          const ty = Math.sin(a) * 5;
-          this.size = lerp(this.size, 1.5, 0.05);
+          const tx = Math.cos(a) * 3; // 降低移动速度
+          const ty = Math.sin(a) * 3;
 
           if (dist < 5) {
             this.lightness = lerp(this.lightness, 100, 0.01);
@@ -112,8 +109,8 @@
         this.x = quarterW + Math.random() * (c2.width - quarterW);
         this.y = c2.height - 15;
         this.angle = Math.random() * Math.PI / 4 - Math.PI / 6;
-        this.blastSpeed = 6 + Math.random() * 7;
-        this.shardCount = 15 + Math.floor(Math.random() * 15);
+        this.blastSpeed = 5 + Math.random() * 5; // 降低火箭速度
+        this.shardCount = 10 + Math.floor(Math.random() * 10); // 减少粒子数量
         this.xSpeed = Math.sin(this.angle) * this.blastSpeed;
         this.ySpeed = -Math.cos(this.angle) * this.blastSpeed;
         this.hue = Math.floor(Math.random() * 360);
@@ -134,7 +131,7 @@
       }
 
       explode() {
-        for (let i = 0; i < 70; i++) {
+        for (let i = 0; i < this.shardCount; i++) {
           shards.push(new Shard(this.x, this.y, this.hue));
         }
       }
@@ -142,18 +139,16 @@
 
     const [c1, c2, c3] = document.querySelectorAll('canvas');
     const [ctx1, ctx2, ctx3] = [c1, c2, c3].map(c => c.getContext('2d'));
-    let fontSize = 30; // 初始字体大小
+    let fontSize = 30; // 减小字体大小以适应手机屏幕
     const rockets = [];
     const shards = [];
     const targets = [];
-    const fidelity = 5; // 目标点密度
+    const fidelity = 5; // 降低目标点密度
     let counter = 0;
 
     function resizeCanvas() {
       c1.width = c2.width = c3.width = window.innerWidth;
       c1.height = c2.height = c3.height = window.innerHeight;
-      adjustFontSize(); // 调整字体大小
-      drawText(); // 重新绘制文字
     }
 
     resizeCanvas();
@@ -171,7 +166,7 @@
 
     function adjustFontSize() {
       let maxLineWidth = 0;
-      fontSize = Math.min(30, window.innerWidth / 12); // 根据屏幕宽度动态调整字体大小
+      fontSize = Math.min(30, window.innerWidth / 15); // 进一步减小字体大小
       ctx1.font = `900 ${fontSize}px Arial`;
       textLines.forEach(line => {
         const lineWidth = ctx1.measureText(line).width;
@@ -193,43 +188,42 @@
       }
     }
 
-    function drawText() {
-      ctx1.clearRect(0, 0, c1.width, c1.height);
-      ctx1.fillStyle = "white";
-      ctx1.font = `900 ${fontSize}px Arial`;
-      const totalTextHeight = fontSize * textLines.length * 1.5;
-      textLines.forEach((line, index) => {
-        const textWidth = ctx1.measureText(line).width;
-        const x = (c2.width - textWidth) / 2; // 居中显示
-        const y = (c2.height - totalTextHeight) / 2 + fontSize * (index + 1);
-        ctx1.fillText(line, x, y);
-      });
+    adjustFontSize();
 
-      const imgData = ctx1.getImageData(0, 0, c1.width, c1.height);
-      targets.length = 0; // 清空目标点
-      for (let i = 0, max = imgData.data.length; i < max; i += 4) {
-        const alpha = imgData.data[i + 3];
-        const x = Math.floor(i / 4) % imgData.width;
-        const y = Math.floor(i / 4 / imgData.width);
+    c1.width = c2.width;
+    c1.height = fontSize * textLines.length * 1.5;
 
-        if (alpha && x % fidelity === 0 && y % fidelity === 0) {
-          targets.push({ x, y });
-        }
+    const totalTextHeight = fontSize * textLines.length * 1.5;
+
+    ctx1.font = `900 ${fontSize}px Arial`;
+    textLines.forEach((line, index) => {
+      const textWidth = ctx1.measureText(line).width;
+      const x = (c2.width - textWidth) / 2; // 居中显示
+      const y = (c2.height - totalTextHeight) / 2 + fontSize * (index + 1);
+      ctx1.fillText(line, x, y);
+    });
+
+    const imgData = ctx1.getImageData(0, 0, c1.width, c1.height);
+    for (let i = 0, max = imgData.data.length; i < max; i += 4) {
+      const alpha = imgData.data[i + 3];
+      const x = Math.floor(i / 4) % imgData.width;
+      const y = Math.floor(i / 4 / imgData.width);
+
+      if (alpha && x % fidelity === 0 && y % fidelity === 0) {
+        targets.push({ x, y });
       }
     }
 
-    drawText();
-
     ctx3.fillStyle = '#FFF';
     ctx3.shadowColor = '#FFF';
-    ctx3.shadowBlur = 25;
+    ctx3.shadowBlur = 15; // 减小光晕效果
 
     (function loop() {
       ctx2.fillStyle = "rgba(0, 0, 0, .1)";
       ctx2.fillRect(0, 0, c2.width, c2.height);
       counter += 1;
 
-      if (counter % 15 === 0) {
+      if (counter % 20 === 0) { // 减少烟花生成频率
         rockets.push(new Rocket());
       }
       rockets.forEach((r, i) => {
