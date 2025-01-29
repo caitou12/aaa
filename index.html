@@ -12,6 +12,8 @@
     }
     canvas {
       position: absolute;
+      top: 0;
+      left: 0;
     }
   </style>
 </head>
@@ -140,16 +142,18 @@
 
     const [c1, c2, c3] = document.querySelectorAll('canvas');
     const [ctx1, ctx2, ctx3] = [c1, c2, c3].map(c => c.getContext('2d'));
-    let fontSize = 50; // 减小字体大小以适应手机屏幕
+    let fontSize = 30; // 初始字体大小
     const rockets = [];
     const shards = [];
     const targets = [];
-    const fidelity = 5; // 降低目标点密度
+    const fidelity = 5; // 目标点密度
     let counter = 0;
 
     function resizeCanvas() {
       c1.width = c2.width = c3.width = window.innerWidth;
       c1.height = c2.height = c3.height = window.innerHeight;
+      adjustFontSize(); // 调整字体大小
+      drawText(); // 重新绘制文字
     }
 
     resizeCanvas();
@@ -167,7 +171,7 @@
 
     function adjustFontSize() {
       let maxLineWidth = 0;
-      fontSize = Math.min(50, window.innerWidth / 10); // 进一步减小字体大小
+      fontSize = Math.min(30, window.innerWidth / 12); // 根据屏幕宽度动态调整字体大小
       ctx1.font = `900 ${fontSize}px Arial`;
       textLines.forEach(line => {
         const lineWidth = ctx1.measureText(line).width;
@@ -189,31 +193,32 @@
       }
     }
 
-    adjustFontSize();
+    function drawText() {
+      ctx1.clearRect(0, 0, c1.width, c1.height);
+      ctx1.fillStyle = "white";
+      ctx1.font = `900 ${fontSize}px Arial`;
+      const totalTextHeight = fontSize * textLines.length * 1.5;
+      textLines.forEach((line, index) => {
+        const textWidth = ctx1.measureText(line).width;
+        const x = (c2.width - textWidth) / 2; // 居中显示
+        const y = (c2.height - totalTextHeight) / 2 + fontSize * (index + 1);
+        ctx1.fillText(line, x, y);
+      });
 
-    c1.width = c2.width;
-    c1.height = fontSize * textLines.length * 1.5;
+      const imgData = ctx1.getImageData(0, 0, c1.width, c1.height);
+      targets.length = 0; // 清空目标点
+      for (let i = 0, max = imgData.data.length; i < max; i += 4) {
+        const alpha = imgData.data[i + 3];
+        const x = Math.floor(i / 4) % imgData.width;
+        const y = Math.floor(i / 4 / imgData.width);
 
-    const totalTextHeight = fontSize * textLines.length * 1.5;
-
-    ctx1.font = `900 ${fontSize}px Arial`;
-    textLines.forEach((line, index) => {
-      const textWidth = ctx1.measureText(line).width;
-      const x = (c2.width - textWidth) / 2; // 居中显示
-      const y = (c2.height - totalTextHeight) / 2 + fontSize * (index + 1);
-      ctx1.fillText(line, x, y);
-    });
-
-    const imgData = ctx1.getImageData(0, 0, c1.width, c1.height);
-    for (let i = 0, max = imgData.data.length; i < max; i += 4) {
-      const alpha = imgData.data[i + 3];
-      const x = Math.floor(i / 4) % imgData.width;
-      const y = Math.floor(i / 4 / imgData.width);
-
-      if (alpha && x % fidelity === 0 && y % fidelity === 0) {
-        targets.push({ x, y });
+        if (alpha && x % fidelity === 0 && y % fidelity === 0) {
+          targets.push({ x, y });
+        }
       }
     }
+
+    drawText();
 
     ctx3.fillStyle = '#FFF';
     ctx3.shadowColor = '#FFF';
