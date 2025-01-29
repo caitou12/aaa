@@ -168,7 +168,7 @@
 
     function adjustFontSize() {
       let maxLineWidth = 0;
-      fontSize = Math.min(50, window.innerWidth / 10); // 进一步减小字体大小
+      fontSize = Math.min(50, window.innerWidth / 10); // 限制最大字体大小
       ctx1.font = `900 ${fontSize}px Arial`;
       textLines.forEach(line => {
         const lineWidth = ctx1.measureText(line).width;
@@ -177,6 +177,7 @@
         }
       });
 
+      // 确保字体大小不会导致文本超出屏幕
       while (maxLineWidth > c2.width && fontSize > 10) {
         fontSize--;
         ctx1.font = `900 ${fontSize}px Arial`;
@@ -192,16 +193,18 @@
 
     adjustFontSize();
 
+    // 动态调整字体大小后，计算总文本高度并居中
     c1.width = c2.width;
-    c1.height = fontSize * textLines.length * 1.5;
+    c1.height = c2.height;
 
     const totalTextHeight = fontSize * textLines.length * 1.5;
+    const textStartY = (c2.height - totalTextHeight) / 2;
 
     ctx1.font = `900 ${fontSize}px Arial`;
     textLines.forEach((line, index) => {
       const textWidth = ctx1.measureText(line).width;
       const x = (c2.width - textWidth) / 2; // 居中显示
-      const y = (c2.height - totalTextHeight) / 2 + fontSize * (index + 1);
+      const y = textStartY + fontSize * (index + 1); // 根据总文本高度居中
       ctx1.fillText(line, x, y);
     });
 
