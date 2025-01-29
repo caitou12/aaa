@@ -218,16 +218,15 @@
     ctx3.shadowColor = '#FFF';
     ctx3.shadowBlur = 25;
 
-    // Animation loop
-    function loop(timestamp) {
+    // ANIMATION LOOP
+    function loop() {
       ctx2.fillStyle = "rgba(0, 0, 0, .1)";
       ctx2.fillRect(0, 0, c2.width, c2.height);
       counter += 1;
 
-      if (counter % 20 === 0) {
+      if (counter % 15 === 0) {
         rockets.push(new Rocket());
       }
-
       rockets.forEach((r, i) => {
         r.draw();
         r.update();
@@ -251,7 +250,6 @@
 
     requestAnimationFrame(loop);
 
-    // Helper functions
     const lerp = (a, b, t) => Math.abs(b - a) > 0.1 ? a + t * (b - a) : b;
 
     function getTarget() {
@@ -285,6 +283,7 @@
       });
     });
 
+    // Trigger music play on click or touchstart
     document.body.addEventListener("click", playMusic);
     document.body.addEventListener("touchstart", playMusic);
   </script>
