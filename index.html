@@ -4,15 +4,28 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>蛇年快乐</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet"> <!-- 使用 Google Fonts 中的 Roboto 字体 -->
   <style>
     body {
       margin: 0;
       overflow: hidden;
       background: black;
+      font-family: 'Roboto', sans-serif; /* 使用 Roboto 字体 */
     }
     canvas {
       position: absolute;
-      display: block; /* 避免滚动条 */
+      display: block;
+    }
+    /* 文字样式 */
+    .text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 4rem;
+      color: white;
+      text-align: center;
+      text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7); /* 加强文字的阴影效果 */
     }
   </style>
 </head>
@@ -20,27 +33,19 @@
   <canvas></canvas>
   <canvas></canvas>
   <canvas></canvas>
+  
+  <div class="text">
+    <p>蛇年快乐!</p>
+    <p>愿你每一天都充满阳光和幸福。</p>
+    <p>愿新的一年，所有的梦想都能实现！</p>
+  </div>
 
-  <!-- 音乐播放器 -->
   <audio id="bgMusic" loop>
     <source src="./music/music.mp3" type="audio/mpeg" />
     Your browser does not support the audio element.
   </audio>
 
   <script>
-    function GetRequest() {
-      var url = decodeURI(location.search);
-      var theRequest = new Object();
-      if (url.indexOf("?") != -1) {
-        var str = url.substr(1);
-        strs = str.split("&");
-        for (var i = 0; i < strs.length; i++) {
-          theRequest[strs[i].split("=")[0]] = unescape(strs[i].split("=")[1]);
-        }
-      }
-      return theRequest;
-    }
-
     class Shard {
       constructor(x, y, hue) {
         this.x = x;
@@ -141,11 +146,11 @@
 
     const [c1, c2, c3] = document.querySelectorAll('canvas');
     const [ctx1, ctx2, ctx3] = [c1, c2, c3].map(c => c.getContext('2d'));
-    let fontSize = 50; // 减小字体大小以适应手机屏幕
+    let fontSize = 50;
     const rockets = [];
     const shards = [];
     const targets = [];
-    const fidelity = 5; // 降低目标点密度
+    const fidelity = 5;
     let counter = 0;
 
     function resizeCanvas() {
@@ -168,7 +173,7 @@
 
     function adjustFontSize() {
       let maxLineWidth = 0;
-      fontSize = Math.min(50, window.innerWidth / 10); // 限制最大字体大小
+      fontSize = Math.min(50, window.innerWidth / 10);
       ctx1.font = `900 ${fontSize}px Arial`;
       textLines.forEach(line => {
         const lineWidth = ctx1.measureText(line).width;
@@ -177,7 +182,6 @@
         }
       });
 
-      // 确保字体大小不会导致文本超出屏幕
       while (maxLineWidth > c2.width && fontSize > 10) {
         fontSize--;
         ctx1.font = `900 ${fontSize}px Arial`;
@@ -193,15 +197,17 @@
 
     adjustFontSize();
 
-    // 动态调整字体大小后，计算总文本高度并居中
+    c1.width = c2.width;
+    c1.height = c2.height;
+
     const totalTextHeight = fontSize * textLines.length * 1.5;
     const textStartY = (c2.height - totalTextHeight) / 2;
 
     ctx1.font = `900 ${fontSize}px Arial`;
     textLines.forEach((line, index) => {
       const textWidth = ctx1.measureText(line).width;
-      const x = (c2.width - textWidth) / 2; // 居中显示
-      const y = textStartY + fontSize * (index + 1); // 根据总文本高度居中
+      const x = (c2.width - textWidth) / 2;
+      const y = textStartY + fontSize * (index + 1);
       ctx1.fillText(line, x, y);
     });
 
