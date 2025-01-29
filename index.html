@@ -140,7 +140,7 @@
 
     const [c1, c2, c3] = document.querySelectorAll('canvas');
     const [ctx1, ctx2, ctx3] = [c1, c2, c3].map(c => c.getContext('2d'));
-    let fontSize = 100;
+    let fontSize = 50; // 减小字体大小以适应手机屏幕
     const rockets = [];
     const shards = [];
     const targets = [];
@@ -167,7 +167,7 @@
 
     function adjustFontSize() {
       let maxLineWidth = 0;
-      fontSize = Math.min(100, window.innerWidth / 10);
+      fontSize = Math.min(50, window.innerWidth / 10); // 进一步减小字体大小
       ctx1.font = `900 ${fontSize}px Arial`;
       textLines.forEach(line => {
         const lineWidth = ctx1.measureText(line).width;
@@ -199,7 +199,7 @@
     ctx1.font = `900 ${fontSize}px Arial`;
     textLines.forEach((line, index) => {
       const textWidth = ctx1.measureText(line).width;
-      const x = (c1.width - textWidth) / 2;
+      const x = (c2.width - textWidth) / 2; // 居中显示
       const y = (c2.height - totalTextHeight) / 2 + fontSize * (index + 1);
       ctx1.fillText(line, x, y);
     });
