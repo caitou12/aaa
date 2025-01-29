@@ -22,10 +22,12 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      font-size: 6vw; /* 使用 vw 单位，保证适配手机屏幕 */
-      color: white;
+      font-size: 8vw; /* 根据屏幕宽度动态调整字体大小 */
+      color: white; /* 设置字体颜色为白色 */
       text-align: center;
-      text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7); /* 加强文字的阴影效果 */
+      text-shadow: 2px 2px 10px rgba(255, 255, 255, 0.8); /* 加强文字的阴影效果 */
+      line-height: 1.5; /* 增加行间距 */
+      width: 90%; /* 限制文字宽度，避免过长 */
     }
   </style>
 </head>
@@ -35,9 +37,14 @@
   <canvas></canvas>
 
   <div class="text">
+  
+    <p>张艳玲,2025年蛇年快乐</p>
+    <p>希望你每天都能被好运和惊喜包围</p>
+    <p>新的一年，愿你笑得像春日暖阳</p>
+    <p>温柔又灿烂，所有的梦想都能如愿以偿</p>
+    <p>要是遇到什么烦心事</p>
+    <p>别忘了我这个“树洞”随时等你倾诉哦</p>
     <p>蛇年快乐!</p>
-    <p>愿你每一天都充满阳光和幸福。</p>
-    <p>愿新的一年，所有的梦想都能实现！</p>
   </div>
 
   <audio id="bgMusic" loop>
@@ -146,7 +153,7 @@
 
     const [c1, c2, c3] = document.querySelectorAll('canvas');
     const [ctx1, ctx2, ctx3] = [c1, c2, c3].map(c => c.getContext('2d'));
-    let fontSize = 50;
+    let fontSize = 100; /* 初始字体大小 */
     const rockets = [];
     const shards = [];
     const targets = [];
@@ -162,18 +169,19 @@
     window.addEventListener('resize', resizeCanvas);
 
     const textLines = [
-      "张艳玲,2025年蛇年快乐,",
-      "希望你每天都能被好运和惊喜包围。",
-      "新的一年，愿你笑得像春日暖阳，",
-      "温柔又灿烂，所有的梦想都能如愿以偿。",
-      "要是遇到什么烦心事，",
-      "别忘了我这个“树洞”随时等你倾诉哦。",
-      "蛇年快乐！"
+    //   "张艳玲,2025年蛇年快乐,",
+    //   "希望你每天都能被好运和惊喜包围。",
+    //   "新的一年，愿你笑得像春日暖阳，",
+    //   "温柔又灿烂，所有的梦想都能如愿以偿。",
+    //   "要是遇到什么烦心事，",
+    //   "别忘了我这个“树洞”随时等你倾诉哦。",
+    //   "蛇年快乐！"
+    " "
     ];
 
     function adjustFontSize() {
       let maxLineWidth = 0;
-      fontSize = Math.min(50, window.innerWidth / 10);
+      fontSize = Math.min(300, window.innerWidth / 4); /* 增大字体为 10vw，相当于 100px */
       ctx1.font = `900 ${fontSize}px Arial`;
       textLines.forEach(line => {
         const lineWidth = ctx1.measureText(line).width;
